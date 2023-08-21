@@ -1,11 +1,18 @@
+import os
 from cv2 import aruco
 
 # Robot Params #
 nuc_ip = ""
 robot_ip = ""
+laptop_ip = ""
 sudo_password = ""
 robot_type = ""  # 'panda' or 'fr3'
 robot_serial_number = ""
+# set libfranka version according to robot type
+if robot_type=='panda':
+    libfranka_version = "0.9.0"
+else:
+    libfranka_version = "0.10.0"
 
 # Camera ID's #
 hand_camera_id = ""
@@ -19,5 +26,9 @@ CHARUCOBOARD_CHECKER_SIZE = 0.020
 CHARUCOBOARD_MARKER_SIZE = 0.016
 ARUCO_DICT = aruco.Dictionary_get(aruco.DICT_5X5_100)
 
+# Ubuntu Pro Token (RT PATCH) #
+ubuntu_pro_token = ""
+
 # Code Version [DONT CHANGE] #
 r2d2_version = "1.3"
+
