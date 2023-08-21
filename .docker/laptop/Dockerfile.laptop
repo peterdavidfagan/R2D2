@@ -1,0 +1,86 @@
+FROM stereolabs/zed:4.0-devel-cuda12.1-ubuntu22.04
+
+# set robot parameters
+ARG ROBOT_TYPE=panda
+ARG LIBFRANKA_VERSION=0.9.0
+ARG ROBOT_IP=172.16.0.1 
+ARG NUC_IP=172.16.0.2
+
+# set directory structure
+ARG NUC_ROBOT_CONFIG_DIR=/app/config/${ROBOT_TYPE}
+ARG NUC_OCULUS_DIR=/app/r2d2/oculus_reader
+ARG NUC_POLYMETIS_DIR=/app/r2d2/fairo/polymetis
+ARG NUC_POLYMETIS_CONFIG_DIR=${NUC_POLYMETIS_DIR}/polymetis/conf
+
+# copy project code to container
+COPY . /app
+WORKDIR /app
+
+# base system installations
+RUN apt-get update && \
+    apt-get install -y software-properties-common build-essential git curl wget python3-pip libspdlog-dev \
+    libeigen3-dev lsb-release ffmpeg libsm6 libxext6 zstd && \
+    apt-get upgrade -y
+
+# install miniconda 
+RUN wget \
+    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && mkdir /root/.conda \
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm -f Miniconda3-latest-Linux-x86_64.sh
+ENV PATH /root/miniconda3/bin:$PATH
+
+# create conda environment
+RUN conda create -n "robot" python=3.7
+SHELL ["conda", "run", "-n", "robot", "/bin/bash", "-c"]
+
+# install the zed sdk
+#ARG UBUNTU_RELEASE_YEAR=22
+#ARG ZED_SDK_MAJOR=4
+#ARG ZED_SDK_MINOR=0
+#ARG CUDA_MAJOR=12
+#ARG CUDA_MINOR=1
+
+#RUN echo "CUDA Version $CUDA_VERSION" > /usr/local/cuda/version.txt
+#RUN apt-get update && \
+#  apt-get install --no-install-recommends dialog bash-completion lsb-release wget less udev sudo  build-essential cmake zstd python3 python3-pip libpng-dev libgomp1 -y && \
+#  python3 -m pip install --upgrade pip; python3 -m pip install numpy opencv-python-headless && \
+#  wget -q -O ZED_SDK_Linux_Ubuntu.run https://download.stereolabs.com/zedsdk/$ZED_SDK_MAJOR.$ZED_SDK_MINOR/cu$CUDA_MAJOR$CUDA_MINOR/ubuntu$UBUNTU_RELEASE_YEAR && \
+#  chmod +x ZED_SDK_Linux_Ubuntu.run && \
+#  ./ZED_SDK_Linux_Ubuntu.run -- silent && \
+#  ln -sf /lib/x86_64-linux-gnu/libusb-1.0.so.0 /usr/lib/x86_64-linux-gnu/libusb-1.0.so && \
+#  rm ZED_SDK_Linux_Ubuntu.run && \
+#  rm -rf /var/lib/apt/lists/* && \
+#  apt-get autoremove && apt-get clean
+
+# install oculus reader
+RUN add-apt-repository universe && \
+    apt-get update -y && \ 
+    apt-get install -y android-tools-fastboot
+RUN pip3 install -e $NUC_OCULUS_DIR && \
+    apt install -y android-tools-adb
+
+# python environment setup
+RUN pip3 install -e . && \
+    pip3 install dm-robotics-moma==0.5.0 --no-deps && \
+    pip3 install dm-robotics-transformations==0.5.0 --no-deps && \
+    pip3 install dm-robotics-agentflow==0.5.0 --no-deps && \
+    pip3 install dm-robotics-geometry==0.5.0 --no-deps && \
+    pip3 install dm-robotics-manipulation==0.5.0 --no-deps && \
+    pip3 install dm-robotics-controllers==0.5.0 --no-deps
+
+
+# using miniconda instead of anaconda so overwrite sh scripts
+RUN find /app/r2d2/franka -type f -name "launch_*.sh" -exec sed -i 's/anaconda/miniconda/g' {} \;
+RUN find /app/scripts/server -type f -name "launch_server.sh" -exec sed -i 's/anaconda/miniconda/g' {} \;
+
+# set absolute paths
+RUN find /app/r2d2/franka -type f -name "launch_*.sh" -exec sed -i 's|~|/root|g' {} \;
+RUN find /app/scripts/server -type f -name "launch_server.sh" -exec sed -i 's|~|/root|g' {} \;
+
+# set polymetis config files
+RUN cp ${NUC_ROBOT_CONFIG_DIR}/franka_hardware.yaml ${NUC_POLYMETIS_CONFIG_DIR}/robot_client/franka_hardware.yaml && \
+    cp ${NUC_ROBOT_CONFIG_DIR}/franka_panda.yaml ${NUC_POLYMETIS_CONFIG_DIR}/robot_model/franka_panda.yaml
+
+# start the server
+ENTRYPOINT ["conda", "run", "-n", "robot", "python", "/app/scripts/main.py"]
