@@ -6,19 +6,21 @@ services:
     environment:
       DISPLAY: ${DISPLAY}
       XAUTHORITY: ${DOCKER_XAUTH}
-      NVIDIA_VISIBLE_DEVICES: all
       ROBOT_TYPE: ${ROBOT_TYPE}
       LIBFRANKA_VERSION: ${LIBFRANKA_VERSION}
       NUC_IP: ${NUC_IP}
       ROBOT_IP: ${ROBOT_IP}
       LAPTOP_IP: ${LAPTOP_IP}
+      NVIDIA_VISIBLE_DEVICES: all
     volumes:
       - /tmp/.X11-unix:/tml/.X11-unix:rw
-      - ${DOCKER_XAUTH}:${DOCKER_XAUTH}
+        #- ${DOCKER_XAUTH}:${DOCKER_XAUTH}
     build: 
       context: ../../
       dockerfile: .docker/laptop/Dockerfile.laptop
     devices:
       - "/dev:/dev"
+    runtime: nvidia
     privileged: true
     network_mode: "host"
+    command: conda run -n "robot" python /app/scripts/main.py
