@@ -1,0 +1,26 @@
+version: "3"
+
+services: 
+  setup_nuc:
+    image: ghcr.io/alexanderkhazatsky/r2d2:nuc_fer
+    environment:
+      ROBOT_TYPE: ${ROBOT_TYPE}
+      LIBFRANKA_VERSION: ${LIBFRANKA_VERSION}
+      NUC_IP: ${NUC_IP}
+      ROBOT_IP: ${ROBOT_IP}
+    build: 
+      context: ../../
+      dockerfile: .docker/nuc/Dockerfile.nuc
+    devices:
+      - "/dev:/dev"
+    privileged: true
+    network_mode: "host"
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 70
+      rttime: -1 # corresponds to 'unlimited'
+      memlock: 8428281856
+    deploy:
+      restart_policy: 
+        condition: any
