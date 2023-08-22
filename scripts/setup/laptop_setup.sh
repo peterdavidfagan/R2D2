@@ -42,6 +42,12 @@ export VARIED_CAMERA_2_ID=$varied_camera_2_id
 export LIBFRANKA_VERSION=$libfranka_version
 rm temp_env_vars.sh
 
+if [ "$ROBOT_TYPE" == "panda" ]; then
+        export LIBFRANKA_VERSION=0.9.0
+else
+        export LIBFRANKA_VERSION=0.10.0
+fi
+
 
 # ensure GUI window is accessible from container
 export DOCKER_XAUTH=/tmp/.docker.xauth

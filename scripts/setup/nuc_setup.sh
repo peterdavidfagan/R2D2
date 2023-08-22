@@ -25,12 +25,17 @@ export GATEWAY_IP=$gateway_ip
 export SUDO_PASSWORD=$sudo_password
 export ROBOT_TYPE=$robot_type
 export ROBOT_SERIAL_NUMBER=$robot_serial_number
-export LIBFRANKA_VERSION=$libfranka_version
 export HAND_CAMERA_ID=$hand_camera_id
 export VARIED_CAMERA_1_ID=$varied_camera_1_id
 export VARIED_CAMERA_2_ID=$varied_camera_2_id
 export UBUNTU_PRO_TOKEN=$ubuntu_pro_token
 rm temp_env_vars.sh
+
+if [ "$ROBOT_TYPE" == "panda" ]; then
+	export LIBFRANKA_VERSION=0.9.0
+else
+	export LIBFRANKA_VERSION=0.10.0
+fi
 
 # set xauth variables
 export DOCKER_XAUTH=/tmp/.docker.xauth
