@@ -32,6 +32,11 @@ export VARIED_CAMERA_2_ID=$varied_camera_2_id
 export UBUNTU_PRO_TOKEN=$ubuntu_pro_token
 rm temp_env_vars.sh
 
+# set xauth variables
+export DOCKER_XAUTH=/tmp/.docker.xauth
+touch $DOCKER_XAUTH
+xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $DOCKER_XAUTH nmerge -
+
 # build control server container
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 DOCKER_COMPOSE_DIR="$ROOT_DIR/.docker/nuc"

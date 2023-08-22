@@ -13,7 +13,7 @@ services:
       LAPTOP_IP: ${LAPTOP_IP}
       NVIDIA_VISIBLE_DEVICES: all
     volumes:
-      - /tmp/.X11-unix:/tml/.X11-unix:rw
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${DOCKER_XAUTH}:${DOCKER_XAUTH}
     build: 
       context: ../../
