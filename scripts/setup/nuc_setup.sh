@@ -20,13 +20,15 @@ awk -F'[[:space:]]*=[[:space:]]*' '/^[[:space:]]*([[:alnum:]_]+)[[:space:]]*=/ &
 source temp_env_vars.sh
 export NUC_IP=$nuc_ip
 export ROBOT_IP=$robot_ip
+export LAPTOP_IP=$laptop_ip
+export GATEWAY_IP=$gateway_ip
 export SUDO_PASSWORD=$sudo_password
 export ROBOT_TYPE=$robot_type
 export ROBOT_SERIAL_NUMBER=$robot_serial_number
+export LIBFRANKA_VERSION=$libfranka_version
 export HAND_CAMERA_ID=$hand_camera_id
 export VARIED_CAMERA_1_ID=$varied_camera_1_id
 export VARIED_CAMERA_2_ID=$varied_camera_2_id
-export LIBFRANKA_VERSION=$libfranka_version
 export UBUNTU_PRO_TOKEN=$ubuntu_pro_token
 rm temp_env_vars.sh
 
@@ -61,7 +63,7 @@ echo "Ethernet interface found: $interface_name"
 
 # set and activate static ip address
 nmcli connection add con-name "nuc_static" ifname "$interface_name" type ethernet
-nmcli connection modify "nuc_static" ipv4.method manual ipv4.address $NUC_IP/24 ipv4.gateway $NUC_IP
+nmcli connection modify "nuc_static" ipv4.method manual ipv4.address $NUC_IP/24 ipv4.gateway $GATEWAY_IP
 nmcli connection up "nuc_static"
 
 # start control server service and ensure runs on restart
