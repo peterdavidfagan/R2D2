@@ -2,9 +2,9 @@ import os
 from cv2 import aruco
 
 # Robot Params #
-nuc_ip = "192.168.1.10"
-robot_ip = "192.168.1.1"
-laptop_ip = "192.168.1.20"
+nuc_ip = "192.168.106.10"
+robot_ip = "192.168.106.99"
+laptop_ip = "192.168.106.20"
 gateway_ip = "129.215.91.247" # only needed if connecting to internet via ethernet
 sudo_password = "robot"
 robot_type = "panda"  # 'panda' or 'fr3'
