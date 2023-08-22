@@ -32,6 +32,7 @@ source temp_env_vars.sh
 export NUC_IP=$nuc_ip
 export LAPTOP_IP=$laptop_ip
 export ROBOT_IP=$robot_ip
+export GATEWAY_IP=$gateway_ip
 export SUDO_PASSWORD=$sudo_password
 export ROBOT_TYPE=$robot_type
 export ROBOT_SERIAL_NUMBER=$robot_serial_number
@@ -67,7 +68,7 @@ echo "Ethernet interface found: $interface_name"
 # set static ip address
 nmcli connection delete "laptop_static"
 nmcli connection add con-name "laptop_static" ifname "$interface_name" type ethernet
-nmcli connection modify "laptop_static" ipv4.method manual ipv4.address $LAPTOP_IP/24 ipv4.gateway $LAPTOP_IP
+nmcli connection modify "laptop_static" ipv4.method manual ipv4.address $LAPTOP_IP/24 ipv4.gateway $GATEWAY_IP
 nmcli connection up "laptop_static"
 
 # run docker container
