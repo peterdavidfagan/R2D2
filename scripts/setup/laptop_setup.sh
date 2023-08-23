@@ -1,5 +1,49 @@
 #!/bin/bash
 
+# path variables
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+DOCKER_COMPOSE_DIR="$ROOT_DIR/.docker/laptop"
+DOCKER_COMPOSE_FILE="$DOCKER_COMPOSE_DIR/docker-compose-laptop.yaml"
+
+# ensure local files are up to date and git lfs is configured
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
+apt update && apt install -y git-lfs
+git lfs install # has to be run only once on a single user account
+cd $ROOT_DIR && git submodule update --recursive --remote --init
+
+# install APK on Oculus device
+apt install -y android-tools-adb
+
+# Function to display devices and ask for confirmation
+function confirm_devices {
+    devices=$(adb devices)
+    
+    echo "List of devices:"
+    echo "$devices"
+    
+    read -p "Is the list of devices correct? (y/n): " confirmation
+    
+    if [ "$confirmation" != "y" ] && [ "$confirmation" != "Y" ]; then
+        return 1
+    fi
+}
+
+# Retry loop
+max_retries=3
+retry_count=0
+
+while ! confirm_devices; do
+    ((retry_count++))
+    if [ "$retry_count" -ge "$max_retries" ]; then
+        echo "Max retry attempts reached. Aborting installation."
+        exit 1
+    fi
+    echo "Retrying..."
+done
+
+# install application on oculus device
+python $ROOT_DIR/r2d2/oculus_reader/oculus_reader/reader.py
+
 # install docker
 apt-get update
 apt-get install ca-certificates curl gnupg
@@ -55,9 +99,6 @@ touch $DOCKER_XAUTH
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $DOCKER_XAUTH nmerge -
 
 # build client server container
-ROOT_DIR="$(git rev-parse --show-toplevel)"
-DOCKER_COMPOSE_DIR="$ROOT_DIR/.docker/laptop"
-DOCKER_COMPOSE_FILE="$DOCKER_COMPOSE_DIR/docker-compose-laptop.yaml"
 cd $DOCKER_COMPOSE_DIR && docker compose -f $DOCKER_COMPOSE_FILE build
 
 # find ethernet interface on device
