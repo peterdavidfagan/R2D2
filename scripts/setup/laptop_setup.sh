@@ -49,6 +49,8 @@ done
 # install application on oculus device
 pip3 install -e $ROOT_DIR/r2d2/oculus_reader
 python3 $ROOT_DIR/r2d2/oculus_reader/oculus_reader/reader.py
+echo cleaning up python threads ...
+sleep 5
 adb kill-server
 
 # install docker
