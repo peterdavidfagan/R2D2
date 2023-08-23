@@ -80,8 +80,3 @@ nmcli connection up "nuc_static"
 DOCKER_COMPOSE_FILE="$(git rev-parse --show-toplevel)/.docker/nuc/docker-compose-nuc.yaml"
 docker compose -f $DOCKER_COMPOSE_FILE up -d
 
-# Display a message and wait for user confirmation
-echo "Docker container started with restart always policy. Press Enter to reboot your machine..."
-read _
-
-reboot
