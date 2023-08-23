@@ -6,6 +6,8 @@ DOCKER_COMPOSE_DIR="$ROOT_DIR/.docker/laptop"
 DOCKER_COMPOSE_FILE="$DOCKER_COMPOSE_DIR/docker-compose-laptop.yaml"
 
 # ensure local files are up to date and git lfs is configured
+eval "$(ssh-agent -s)"
+ssh-add /home/robot/.ssh/id_ed25519
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
 apt update && apt install -y git-lfs
 git lfs install # has to be run only once on a single user account
@@ -45,7 +47,8 @@ while ! confirm_devices; do
 done
 
 # install application on oculus device
-python $ROOT_DIR/r2d2/oculus_reader/oculus_reader/reader.py
+pip3 install -e $ROOT_DIR/r2d2/oculus_reader
+python3 $ROOT_DIR/r2d2/oculus_reader/oculus_reader/reader.py
 adb kill-server
 
 # install docker
