@@ -1,11 +1,17 @@
 #!/bin/bash
 
+# print out nice ascii art
+ascii=$(cat ./intro.txt)
+echo "$ascii"
+
 # path variables
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 DOCKER_COMPOSE_DIR="$ROOT_DIR/.docker/laptop"
 DOCKER_COMPOSE_FILE="$DOCKER_COMPOSE_DIR/docker-compose-laptop.yaml"
 
 # ensure local files are up to date and git lfs is configured
+echo -e "0. Ensure all submodules are cloned and oculus_reader APK file pulled locally \n"
+
 eval "$(ssh-agent -s)"
 ssh-add /home/robot/.ssh/id_ed25519
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash
@@ -14,10 +20,20 @@ git lfs install # has to be run only once on a single user account
 cd $ROOT_DIR && git submodule update --recursive --remote --init
 
 # install APK on Oculus device
+echo -e "1. Install APK on oculus device \n"
+
 usermod -aG plugdev $LOGNAME
 newgrp plugdev
 apt install -y android-tools-adb android-sdk-platform-tools-common
 adb start-server
+
+read -p "Connect your Oculus Quest 2 via USB-C, and approve USB debugging within device. Confirm with y when complete? (y/n): " confirmation
+    
+if [ "$confirmation" != "y" ] && [ "$confirmation" != "Y" ]; then
+	return 1
+else
+	return exit 1
+fi
 
 # Function to display devices and ask for confirmation
 function confirm_devices {
@@ -46,14 +62,15 @@ while ! confirm_devices; do
     echo "Retrying..."
 done
 
-# install application on oculus device
 pip3 install -e $ROOT_DIR/r2d2/oculus_reader
 python3 $ROOT_DIR/r2d2/oculus_reader/oculus_reader/reader.py
-echo cleaning up python threads ...
+echo cleaning up threads ...
 sleep 5
 adb kill-server
 
 # install docker
+echo -e "2. Install docker \n"
+
 apt-get update
 apt-get install ca-certificates curl gnupg
 install -m 0755 -d /etc/apt/keyrings
@@ -67,6 +84,8 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # install and configure nvidia container toolkit
+echo -e "3. Install Nvidia container toolkit \n"
+
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
       && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
       && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
@@ -79,6 +98,8 @@ systemctl restart docker
 
 
 # expose parameters as environment variables
+echo -e "4. Set environment variables from parameters file \n"
+
 PARAMETERS_FILE="$(git rev-parse --show-toplevel)/r2d2/misc/parameters.py"
 awk -F'[[:space:]]*=[[:space:]]*' '/^[[:space:]]*([[:alnum:]_]+)[[:space:]]*=/ && $1 != "ARUCO_DICT" { gsub("\"", "", $2); print "export " $1 "=" $2 }' "$PARAMETERS_FILE" > temp_env_vars.sh
 source temp_env_vars.sh
@@ -103,17 +124,21 @@ fi
 
 
 # ensure GUI window is accessible from container
+echo -e "5. set Docker Xauth for x11 forwarding \n"
+
 export DOCKER_XAUTH=/tmp/.docker.xauth
 touch $DOCKER_XAUTH
 xauth nlist $DISPLAY | sed -e 's/^..../ffff/' | xauth -f $DOCKER_XAUTH nmerge -
 
 # build client server container
+echo -e "6. build control server container \n"
+
 cd $DOCKER_COMPOSE_DIR && docker compose -f $DOCKER_COMPOSE_FILE build
 
 # find ethernet interface on device
-interface_name=$(ip -o link show | grep -Eo '^[0-9]+: (en|eth|ens|eno|enp)[a-z0-9]*' | awk -F' ' '{print $2}')
+echo -e "7. set static ip \n"
 
-# Check if an interface name was found
+interface_name=$(ip -o link show | grep -Eo '^[0-9]+: (en|eth|ens|eno|enp)[a-z0-9]*' | awk -F' ' '{print $2}')
 if [ -z "$interface_name" ]; then
     echo "No Ethernet interface found."
     exit 1
@@ -121,11 +146,11 @@ fi
 
 echo "Ethernet interface found: $interface_name"
 
-# set static ip address
 nmcli connection delete "laptop_static"
 nmcli connection add con-name "laptop_static" ifname "$interface_name" type ethernet
 nmcli connection modify "laptop_static" ipv4.method manual ipv4.address $LAPTOP_IP/24 ipv4.gateway $GATEWAY_IP
 nmcli connection up "laptop_static"
 
 # run docker container
+echo -e "8. run client application \n"
 docker compose -f $DOCKER_COMPOSE_FILE up
