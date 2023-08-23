@@ -21,7 +21,7 @@ WORKDIR /app
 
 # base system installations
 RUN apt-get update && \
-    apt-get install -y software-properties-common build-essential git curl wget python3-pip libspdlog-dev \
+    apt-get install -y software-properties-common build-essential sudo git curl wget python3-pip libspdlog-dev \
     libeigen3-dev lsb-release ffmpeg libsm6 libxext6 zstd && \
     apt-get upgrade -y
 
