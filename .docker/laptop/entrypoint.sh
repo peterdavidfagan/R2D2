@@ -2,7 +2,7 @@
 
 # activate conda
 source ~/miniconda3/bin/activate
-conda activate polymetis-local
+conda activate robot
 
 # install pyzed (TODO: move to main build after debug)
 cd /usr/local/zed && python get_python_api.py

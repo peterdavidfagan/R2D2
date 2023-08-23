@@ -23,4 +23,4 @@ services:
     runtime: nvidia
     privileged: true
     network_mode: "host"
-    command: conda run -n "robot" python /app/scripts/main.py
+    command: python /app/scripts/main.py
