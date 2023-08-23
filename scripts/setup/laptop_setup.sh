@@ -12,7 +12,10 @@ git lfs install # has to be run only once on a single user account
 cd $ROOT_DIR && git submodule update --recursive --remote --init
 
 # install APK on Oculus device
-apt install -y android-tools-adb
+usermod -aG plugdev $LOGNAME
+newgrp plugdev
+apt install -y android-tools-adb android-sdk-platform-tools-common
+adb start-server
 
 # Function to display devices and ask for confirmation
 function confirm_devices {
@@ -21,7 +24,7 @@ function confirm_devices {
     echo "List of devices:"
     echo "$devices"
     
-    read -p "Is the list of devices correct? (y/n): " confirmation
+    read -p "Is your oculus device connected? (y/n): " confirmation
     
     if [ "$confirmation" != "y" ] && [ "$confirmation" != "Y" ]; then
         return 1
@@ -43,6 +46,7 @@ done
 
 # install application on oculus device
 python $ROOT_DIR/r2d2/oculus_reader/oculus_reader/reader.py
+adb kill-server
 
 # install docker
 apt-get update
