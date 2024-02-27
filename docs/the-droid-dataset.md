@@ -55,331 +55,43 @@ gsutil cp -r gs://xembodiment_data/r2d2/r2d2-data-full <path_on_local>
 
 ## 📝 Dataset Schema
 
-```json
-{
-    "pythonClassName": "tensorflow_datasets.core.features.features_dict.FeaturesDict",
-    "featuresDict": {
-        "features": {
-            "steps": {
-                "pythonClassName": "tensorflow_datasets.core.features.dataset_feature.Dataset",
-                "sequence": {
-                    "feature": {
-                        "pythonClassName": "tensorflow_datasets.core.features.features_dict.FeaturesDict",
-                        "featuresDict": {
-                            "features": {
-                                "is_terminal": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.scalar.Scalar",
-                                    "tensor": {
-                                        "shape": {},
-                                        "dtype": "bool",
-                                        "encoding": "none"
-                                    },
-                                    "description": "True on last step of the episode if it is a terminal step, True for demos."
-                                },
-                                "is_last": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.scalar.Scalar",
-                                    "tensor": {
-                                        "shape": {},
-                                        "dtype": "bool",
-                                        "encoding": "none"
-                                    },
-                                    "description": "True on last step of the episode."
-                                },
-                                "language_instruction_3": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.text_feature.Text",
-                                    "text": {},
-                                    "description": "Alternative Language Instruction."
-                                },
-                                "observation": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.features_dict.FeaturesDict",
-                                    "featuresDict": {
-                                        "features": {
-                                            "gripper_position": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "1"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Gripper position statae"
-                                            },
-                                            "cartesian_position": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "6"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Robot Cartesian state"
-                                            },
-                                            "wrist_image_left": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.image_feature.Image",
-                                                "image": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "180",
-                                                            "320",
-                                                            "3"
-                                                        ]
-                                                    },
-                                                    "dtype": "uint8",
-                                                    "encodingFormat": "jpeg"
-                                                },
-                                                "description": "Wrist camera RGB left viewpoint"
-                                            },
-                                            "joint_position": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "7"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Joint position state"
-                                            },
-                                            "exterior_image_2_left": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.image_feature.Image",
-                                                "image": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "180",
-                                                            "320",
-                                                            "3"
-                                                        ]
-                                                    },
-                                                    "dtype": "uint8",
-                                                    "encodingFormat": "jpeg"
-                                                },
-                                                "description": "Exterior camera 2 left viewpoint"
-                                            },
-                                            "exterior_image_1_left": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.image_feature.Image",
-                                                "image": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "180",
-                                                            "320",
-                                                            "3"
-                                                        ]
-                                                    },
-                                                    "dtype": "uint8",
-                                                    "encodingFormat": "jpeg"
-                                                },
-                                                "description": "Exterior camera 1 left viewpoint"
-                                            }
-                                        }
-                                    }
-                                },
-                                "action_dict": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.features_dict.FeaturesDict",
-                                    "featuresDict": {
-                                        "features": {
-                                            "gripper_position": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "1"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Commanded gripper position"
-                                            },
-                                            "cartesian_velocity": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "6"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Commanded Cartesian velocity"
-                                            },
-                                            "cartesian_position": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "6"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Commanded Cartesian position"
-                                            },
-                                            "gripper_velocity": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "1"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Commanded gripper velocity"
-                                            },
-                                            "joint_position": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "7"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Commanded joint position"
-                                            },
-                                            "joint_velocity": {
-                                                "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                                "tensor": {
-                                                    "shape": {
-                                                        "dimensions": [
-                                                            "7"
-                                                        ]
-                                                    },
-                                                    "dtype": "float64",
-                                                    "encoding": "none"
-                                                },
-                                                "description": "Commanded joint velocity"
-                                            }
-                                        }
-                                    }
-                                },
-                                "discount": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.scalar.Scalar",
-                                    "tensor": {
-                                        "shape": {},
-                                        "dtype": "float32",
-                                        "encoding": "none"
-                                    },
-                                    "description": "Discount if provided, default to 1."
-                                },
-                                "reward": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.scalar.Scalar",
-                                    "tensor": {
-                                        "shape": {},
-                                        "dtype": "float32",
-                                        "encoding": "none"
-                                    },
-                                    "description": "Reward if provided, 1 on final step for demos."
-                                },
-                                "language_embedding_3": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                    "tensor": {
-                                        "shape": {
-                                            "dimensions": [
-                                                "512"
-                                            ]
-                                        },
-                                        "dtype": "float32",
-                                        "encoding": "none"
-                                    },
-                                    "description": "Alternative Kona language embedding."
-                                },
-                                "language_embedding": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                    "tensor": {
-                                        "shape": {
-                                            "dimensions": [
-                                                "512"
-                                            ]
-                                        },
-                                        "dtype": "float32",
-                                        "encoding": "none"
-                                    },
-                                    "description": "Kona language embedding. See https://tfhub.dev/google/universal-sentence-encoder-large/5"
-                                },
-                                "language_instruction_2": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.text_feature.Text",
-                                    "text": {},
-                                    "description": "Alternative Language Instruction."
-                                },
-                                "language_instruction": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.text_feature.Text",
-                                    "text": {},
-                                    "description": "Language Instruction."
-                                },
-                                "is_first": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.scalar.Scalar",
-                                    "tensor": {
-                                        "shape": {},
-                                        "dtype": "bool",
-                                        "encoding": "none"
-                                    },
-                                    "description": "True on first step of the episode."
-                                },
-                                "language_embedding_2": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                    "tensor": {
-                                        "shape": {
-                                            "dimensions": [
-                                                "512"
-                                            ]
-                                        },
-                                        "dtype": "float32",
-                                        "encoding": "none"
-                                    },
-                                    "description": "Alternative Kona language embedding."
-                                },
-                                "action": {
-                                    "pythonClassName": "tensorflow_datasets.core.features.tensor_feature.Tensor",
-                                    "tensor": {
-                                        "shape": {
-                                            "dimensions": [
-                                                "7"
-                                            ]
-                                        },
-                                        "dtype": "float64",
-                                        "encoding": "none"
-                                    },
-                                    "description": "Robot action, consists of [6x joint velocities,                             1x gripper position]."
-                                }
-                            }
-                        }
-                    },
-                    "length": "-1"
-                }
-            },
-            "episode_metadata": {
-                "pythonClassName": "tensorflow_datasets.core.features.features_dict.FeaturesDict",
-                "featuresDict": {
-                    "features": {
-                        "recording_folderpath": {
-                            "pythonClassName": "tensorflow_datasets.core.features.text_feature.Text",
-                            "text": {},
-                            "description": "Path to the folder of recordings."
-                        },
-                        "file_path": {
-                            "pythonClassName": "tensorflow_datasets.core.features.text_feature.Text",
-                            "text": {},
-                            "description": "Path to the original data file."
-                        }
-                    }
-                }
-            }
-        }
-    }
+```python
+DROID = {
+        "episode_metadata": {
+                "recording_folderpath": tf.Text, # path to the folder of recordings
+                "file_path": tf.Text, # path to the original data file
+                },
+	"steps": {
+		"is_first": tf.Scalar(dtype=bool), # true on first step of the episode
+                "is_last": tf.Scalar(dtype=bool), # true on last step of the episode
+        	"is_terminal": tf.Scalar(dtype=bool), # true on last step of the episode if it is a terminal step, True for demos
+                                
+                "language_instruction": tf.Text, # language instruction
+                "language_instruction_2": tf.Text, # alternative language instruction
+                "language_instruction_3": tf.Text, # alternative language instruction
+                "language_embedding": tf.Tensor(512, dtype=float32), # Kona language embedding. See https://tfhub.dev/google/universal-sentence-encoder-large/5
+                "language_embedding_2": tf.Tensor(512, dtype=float32), # alternative Kona language embedding
+                "language_embedding_3": tf.Tensor(512, dtype=float32), # alternative Kona language embedding
+                "observation": {
+                                "gripper_position": tf.Tensor(1, dtype=float64), # gripper position state
+                                "cartesian_position": tf.Tensor(6, dtype=float64), # robot Cartesian state
+                                "joint_position": tf.Tensor(7, dtype=float64), # joint position state
+                                "wrist_image_left": tf.Image(180, 320, 3, dtype=uint8), # wrist camera RGB left viewpoint        
+                                "exterior_image_1_left": tf.Image(180, 320, 3, dtype=uint8), # exterior camera 1 left viewpoint
+                                "exterior_image_2_left": tf.Image(180, 320, 3, dtype=uint8), # exterior camera 2 left viewpoint
+                		},                            
+                "action_dict": {
+                                "gripper_position": tf.Tensor(1, dtype=float64), # commanded gripper position
+                                "gripper_velocity": tf.Tensor(1, dtype=float64), # commanded gripper velocity
+                                "cartesian_position": tf.Tensor(6, dtype=float64), # commanded Cartesian position
+                                "cartesian_velocity": tf.Tensor(6, dtype=float64), # commanded Cartesian velocity
+                                "joint_position": tf.Tensor(7, dtype=float64),  # commanded joint position
+                        	"joint_velocity": tf.Tensor(7, dtype=float64), # commanded joint velocity
+                		},
+		"discount": tf.Scalar(dtype=float32), # discount if provided, default to 1
+                "reward": tf.Scalar(dtype=float32), # reward if provided, 1 on final step for demos
+                "action": tf.Tensor(7, dtype=float64), # robot action, consists of [6x joint velocities, 1x gripper position]
+	},
 }
 ```
 
