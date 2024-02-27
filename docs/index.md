@@ -6,7 +6,7 @@ nav_order: 1
 
 # 🤖 **D**istributed **RO**bot **I**nteraction **D**ataset
 
-![](./assets/index/banner.jpeg)
+![](./assets/index/droid_teaser.jpg)
 
 
 ## 👋 Welcome to the DROID Developer Documentation
